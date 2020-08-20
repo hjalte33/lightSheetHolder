@@ -2,31 +2,34 @@
 mt = 6;
 width = 320;
 depth = 60;
+
 sheetWidth = 220;
 sheetThickness = 10;
 ledWidth = 12;
-ledLength = 210;
+roomLength = 210;
+
 dimmerHoleWidth = 5;
 dimmerHoleOffset = [18,20];
 dimmerWidth = 25;
 dimmerDepth = 30;
 screwDia = 3;
+
 feetDia = 10;
 
 
 $fn = 60;
 
 spaceing(){
-    middlePlate();
     topPlate();
+    middlePlate();
+    middlePlate();
     fillerPlate1();
     fillerPlate2();
-    fillerPlate1();
     bottomPlate();
 }
 
 // Feets
-translate([sideSpace() + 10, depth/2])
+translate([sideSpace() + 10, depth/2*3])
     for( i = [0:8]) translate([i*(feetDia+3)+5,0]) circle(feetDia/2);
 
 
@@ -61,8 +64,8 @@ module middlePlate(){
             square([sheetWidth,sheetThickness]);
 
         // Led room    
-        translate([width/2-ledLength/2,depth/2-ledWidth*3/2]) 
-            square([ledLength,ledWidth*3]);
+        translate([width/2-roomLength/2,(depth/2-ledWidth/2)/3]) 
+            square([roomLength,1/3*(2*depth + ledWidth)]);
         
     }
 }

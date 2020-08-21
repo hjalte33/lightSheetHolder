@@ -3,15 +3,15 @@ mt = 6;
 width = 320;
 depth = 60;
 
-sheetWidth = 220;
-sheetThickness = 10;
-ledWidth = 12;
-roomLength = 210;
+sheetWidth = 248;
+sheetThickness = 8.15;
+ledWidth = 10.5;
+roomLength = 226;
 
-dimmerHoleWidth = 5;
-dimmerHoleOffset = [18,20];
-dimmerWidth = 25;
-dimmerDepth = 30;
+dimmerHoleWidth = 6.5;
+dimmerHoleOffset = [17,18.4];
+dimmerWidth = 26;
+dimmerDepth = 31;
 screwDia = 3;
 
 feetDia = 10;

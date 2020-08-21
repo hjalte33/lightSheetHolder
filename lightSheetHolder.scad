@@ -1,9 +1,9 @@
 // variables
 mt = 6;
-width = 320;
+width = 350;
 depth = 60;
 
-sheetWidth = 248;
+sheetWidth = 250;
 sheetThickness = 8.15;
 ledWidth = 10.5;
 roomLength = 226;
@@ -29,7 +29,7 @@ spaceing(){
 }
 
 // Feets
-translate([sideSpace() + 10, depth/2*3])
+translate([sideSpace() + 20, depth/2*3])
     for( i = [0:8]) translate([i*(feetDia+3)+5,0]) circle(feetDia/2);
 
 

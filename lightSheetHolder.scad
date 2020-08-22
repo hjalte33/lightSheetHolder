@@ -1,7 +1,7 @@
 // variables
 mt = 6;
-width = 350;
-depth = 60;
+width = 330;
+depth = 70;
 
 sheetWidth = 250;
 sheetThickness = 8.15;
@@ -19,12 +19,13 @@ feetDia = 10;
 
 $fn = 60;
 
-spaceing(){
+color("dimgrey")
+spaceing(stacked = false,thickness = mt){
     topPlate();
-    middlePlate();
-    middlePlate();
-    fillerPlate1();
-    fillerPlate2();
+    holePlate();
+    holePlate();
+    ledPlate();
+    decoratorPalte();
     bottomPlate();
 }
 
@@ -50,9 +51,9 @@ module topPlate(){
 }
 
 function sideSpace() = (width-sheetWidth)/2;
-function dimmerPos() = [sideSpace()/2-dimmerWidth/2,depth/2-dimmerDepth/2];
+function dimmerPos() = [sideSpace()/2-dimmerWidth/2,depth/2-dimmerHoleOffset[1]];
 
-module middlePlate(){
+module holePlate(){
     difference(){
         square([width,depth]);
         fillets();
@@ -70,20 +71,26 @@ module middlePlate(){
     }
 }
 
-module dimmerPcb(){
+
+module dimmerPcb(wires = false){
     // dimmer pcb hole
-    translate(dimmerPos()) square([dimmerWidth,dimmerDepth]);
-    // wire hole
-    *translate([0,depth-dimmerDepth]) square([(width-sheetWidth)/4,3]);
-    *translate([0,depth/2]) square([sideSpace(),ledWidth/2]);
+    translate(dimmerPos()){
+        square([dimmerWidth,dimmerDepth]);
+        
+        if(wires){ 
+            translate([0,dimmerDepth]) square([sideSpace(),6]);
+            rotate([0,0,180])square([sideSpace(),6]);
+            translate([0,-6]) square([8,6]);
+        } 
+    }   
 }
 
-module fillerPlate1(){
+module ledPlate(){
     difference(){
         square([width,depth]);
         fillets();
         screwHoles();
-        dimmerPcb();
+        dimmerPcb(wires = true);
 
         airHoleDepth = (depth/2-ledWidth/2)*0.667;
         translate([sideSpace(),depth/2-ledWidth/2-airHoleDepth]) square([sheetWidth,airHoleDepth]);
@@ -92,7 +99,7 @@ module fillerPlate1(){
     }
 }
 
-module fillerPlate2(){
+module decoratorPalte(){
     
     difference(){
         square([width,depth]);
@@ -124,10 +131,10 @@ module herringBones(wo=4,wi=9,count=17,depthAdjust=0){
         
         s = (wi-wo)/2;
         d = depth/2-ledWidth/2-depthAdjust;
-        spaceing = (sheetWidth-wi)/count;   
+        space = (sheetWidth-wi)/count;   
         
         for(i = [0:count]){
-            translate([sideSpace()+ i*spaceing ,depth/2+ledWidth/2]) 
+            translate([sideSpace()+ i*space ,depth/2+ledWidth/2]) 
                 polygon([[0,0],
                          [wi,0],
                          [wi-s,d],
@@ -135,11 +142,11 @@ module herringBones(wo=4,wi=9,count=17,depthAdjust=0){
 
         }
         for(i = [0:count]){
-            translate([sideSpace()+ i*spaceing ,depth/2-ledWidth/2]) 
+            translate([sideSpace()+ i*space ,depth/2-ledWidth/2]) 
                 polygon([[0,0],
                          [wi,0],
-                         [wi-s,-d],
-                         [s,-d]]);
+                         [wi-s,-d-0.01], // rounding error bug thing... 
+                         [s,-d-0.01]]);
 
         }
 }
@@ -173,7 +180,15 @@ module fillet(r) {
         }
 }
 
-module spaceing(){
-    for(i = [0:$children-1]) 
-    translate([0,i*(depth+3)]) children(i);
+module spaceing(stacked = false, thickness = 1){
+    if(!stacked){
+        for(i = [0:$children-1]) 
+        translate([0,i*(depth+3)]) children(i);
+    }
+    else{
+        for(i = [0:$children-1]){
+            translate([0,0,i*thickness]) linear_extrude(thickness) children($children -1 - i); 
+        }
+    }
+
 }

@@ -16,6 +16,11 @@ screwDia = 3;
 
 feetDia = 10;
 
+twidth = 99;
+tdepth = 46;
+tswidth = 88.4;
+tsdepth = 35.6;
+
 
 $fn = 60;
 
@@ -32,6 +37,7 @@ spaceing(stacked = false,thickness = mt){
 // Feets
 translate([sideSpace() + 20, depth/2*3])
     for( i = [0:8]) translate([i*(feetDia+3)+5,0]) circle(feetDia/2);
+
 
 
 module topPlate(){
@@ -58,7 +64,7 @@ module holePlate(){
         square([width,depth]);
         fillets();
         screwHoles();
-        dimmerPcb();
+        dimmerPcb(wires = true);
 
         // sheet hole
         translate([width/2-sheetWidth/2,depth/2-sheetThickness/2]) 
@@ -72,30 +78,26 @@ module holePlate(){
 }
 
 
-module dimmerPcb(wires = false){
-    // dimmer pcb hole
-    translate(dimmerPos()){
-        square([dimmerWidth,dimmerDepth]);
-        
-        if(wires){ 
-            translate([0,dimmerDepth]) square([sideSpace(),6]);
-            rotate([0,0,180])square([sideSpace(),6]);
-            translate([0,-6]) square([8,6]);
-        } 
-    }   
-}
 
 module ledPlate(){
     difference(){
         square([width,depth]);
         fillets();
         screwHoles();
-        dimmerPcb(wires = true);
+        dimmerPcb();
 
+
+        herringBones();
         airHoleDepth = (depth/2-ledWidth/2)*0.667;
-        translate([sideSpace(),depth/2-ledWidth/2-airHoleDepth]) square([sheetWidth,airHoleDepth]);
-        translate([sideSpace(),depth/2+ledWidth/2]) square([sheetWidth,airHoleDepth]);
+        *translate([sideSpace(),depth/2-ledWidth/2-airHoleDepth]) square([sheetWidth,airHoleDepth]);
+        *translate([sideSpace(),depth/2+ledWidth/2]) square([sheetWidth,airHoleDepth]);
 
+        }
+
+        // screw pads for psu
+    translate([sideSpace(),depth/2-tdepth/2]){
+        translate([(twidth-tswidth)/2,(tdepth-tsdepth)/2]) circle(6);
+        translate([(twidth-tswidth)/2+tswidth, (tdepth-tsdepth)/2+tsdepth]) circle(6);
     }
 }
 
@@ -106,8 +108,8 @@ module decoratorPalte(){
         fillets();
         screwHoles();
         dimmerPcb();
-        herringBones();
-
+        herringBones(depthAdjust = 8);
+        psu();
 
     }
 }
@@ -119,21 +121,43 @@ module bottomPlate(){
 
         fillets();
         screwHoles();
-
-        herringBones(depthAdjust = 5);
+        psu();
+        herringBones(depthAdjust = 8);
 
       }
 
 }
 
 
-module herringBones(wo=4,wi=9,count=17,depthAdjust=0){
+module dimmerPcb(wires = false){
+    // dimmer pcb hole
+    translate(dimmerPos()){
+        square([dimmerWidth,dimmerDepth]);
+        
+    }   
+    if(wires){ 
+        translate([sideSpace() - dimmerWidth ,depth/2-sheetThickness/2]) square([sideSpace(),sheetThickness]);
+    } 
+}
+
+
+module psu(){
+    wirehole = 15;
+    translate([sideSpace(),depth/2-tdepth/2]){
+        square([twidth,tdepth]);
+        translate([twidth/2,tdepth/2]) square([twidth+28,wirehole],center=true);
+        
+    } 
+
+}
+
+module herringBones(wo=3,wi=6,count=26,depthAdjust=0){
         
         s = (wi-wo)/2;
         d = depth/2-ledWidth/2-depthAdjust;
-        space = (sheetWidth-wi)/count;   
+        space = (sheetWidth-wi)/(count-1);   
         
-        for(i = [0:count]){
+        for(i = [0:count-1]){
             translate([sideSpace()+ i*space ,depth/2+ledWidth/2]) 
                 polygon([[0,0],
                          [wi,0],
@@ -141,7 +165,7 @@ module herringBones(wo=4,wi=9,count=17,depthAdjust=0){
                          [s,d]]);
 
         }
-        for(i = [0:count]){
+        for(i = [0:count-1]){
             translate([sideSpace()+ i*space ,depth/2-ledWidth/2]) 
                 polygon([[0,0],
                          [wi,0],
@@ -160,7 +184,7 @@ module screwHoles(){
 
 }
 
-module fillets(r = 5){
+module fillets(r = 8){
         // fillets
         fillet(r);
         translate([width,0]) rotate([0,0,90]) fillet(r);

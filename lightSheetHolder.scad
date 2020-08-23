@@ -12,6 +12,7 @@ dimmerHoleWidth = 6.5;
 dimmerHoleOffset = [17,18.4];
 dimmerWidth = 26;
 dimmerDepth = 31;
+screwHeadDia = 5;
 screwDia = 3;
 
 feetDia = 10;
@@ -38,6 +39,26 @@ spaceing(stacked = false,thickness = mt){
 translate([sideSpace() + 20, depth/2*3])
     for( i = [0:8]) translate([i*(feetDia+3)+5,0]) circle(feetDia/2);
 
+translate([sideSpace() + 20, depth/2*5]){
+    knob();
+    translate([15,0,0]) knob();
+    translate([30,0,0]) knob(hole = false);
+}
+
+module knob(hole = true){
+    // knob
+    r = 5;
+    difference(){
+        offset(r=1)
+            difference(){
+                circle(r);
+                for (i=[0:7]){
+                    rotate([0,0,i*360/7]) translate([r*1.25,0]) circle(r*0.6);
+                }
+            }
+        if(hole) circle(2.5);
+    }
+}
 
 
 module topPlate(){
@@ -63,7 +84,7 @@ module holePlate(){
     difference(){
         square([width,depth]);
         fillets();
-        screwHoles();
+        screwHoles(screwDia/2);
         dimmerPcb(wires = true);
 
         // sheet hole
@@ -83,7 +104,7 @@ module ledPlate(){
     difference(){
         square([width,depth]);
         fillets();
-        screwHoles();
+        screwHoles(screwHeadDia/2);
         dimmerPcb();
 
 
@@ -106,7 +127,7 @@ module decoratorPalte(){
     difference(){
         square([width,depth]);
         fillets();
-        screwHoles();
+        screwHoles(screwHeadDia/2);
         dimmerPcb();
         herringBones(depthAdjust = 8);
         psu();
@@ -120,7 +141,7 @@ module bottomPlate(){
         square([width,depth]);
 
         fillets();
-        screwHoles();
+        screwHoles(screwHeadDia/2);
         psu();
         herringBones(depthAdjust = 8);
 
@@ -175,12 +196,12 @@ module herringBones(wo=3,wi=6,count=26,depthAdjust=0){
         }
 }
 
-module screwHoles(){
+module screwHoles(r,pos=[10,10]){
         // screw holse
-        translate([screwDia*2,screwDia*2]) circle(screwDia/2);
-        translate([width-screwDia*2,screwDia*2]) circle(screwDia/2);
-        translate([width-screwDia*2,depth-screwDia*2]) circle(screwDia/2);
-        translate([screwDia*2,depth-screwDia*2]) circle(screwDia/2);
+        translate(pos) circle(r);
+        translate([width-pos[0],pos[1]]) circle(r);
+        translate([width-pos[0],depth-pos[1]]) circle(r);
+        translate([pos[0],depth-pos[1]]) circle(r);
 
 }
 

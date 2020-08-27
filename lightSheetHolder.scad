@@ -31,7 +31,7 @@ color("dimgrey")
 spaceing(stacked = true,thickness = mt){
     topPlate();
     holePlate();
-    *holePlate();
+    *holePlate(); // enable if you need more space four your electronics. 
     ledPlate();
     decoratorPalte();
     bottomPlate();
@@ -39,7 +39,7 @@ spaceing(stacked = true,thickness = mt){
 
 // Feets
 translate([sideSpace() + 20, depth/2*3])
-    for( i = [0:8]) translate([i*(feetDia+3)+5,0]) circle(feetDia/2);
+    for( i = [0:3]) translate([i*(feetDia+3)+5,0]) circle(feetDia/2);
 
 translate([sideSpace() + 20, depth/2*3.5]){
     knob();
@@ -58,7 +58,8 @@ module knob(hole = true){
                     rotate([0,0,i*360/8]) translate([r*1.25,0]) circle(r*0.6);
                 }
             }
-        if(hole) circle(5.6/2);
+        // punch a center hole that fits the diameter of your potentiometer.
+        if(hole) circle(5.8/2);
     }
 }
 
